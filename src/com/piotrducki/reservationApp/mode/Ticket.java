@@ -1,4 +1,4 @@
-package bd;
+package com.piotrducki.reservationApp.mode;
 
 public class Ticket
 {

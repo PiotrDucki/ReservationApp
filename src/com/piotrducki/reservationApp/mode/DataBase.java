@@ -1,4 +1,4 @@
-package bd;
+package com.piotrducki.reservationApp.mode;
 
 
 import java.sql.Connection;

@@ -1,4 +1,4 @@
-package bd;
+package com.piotrducki.reservationApp.test;
 
 import java.awt.Point;
 import java.sql.Date;
@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 
+import com.piotrducki.reservationApp.mode.DataBaseInterface;
+import com.piotrducki.reservationApp.mode.Film;
+import com.piotrducki.reservationApp.mode.Ticket;
 public class Test1
 {
 	
@@ -82,12 +85,13 @@ public class Test1
 		
 		
 		//uzyskujemy id rezerwacji
-		idRezerwacji = DataBaseInterface.dodajRezerwacje("pk@gmail.com", obecnyCzas, 5);
+		idRezerwacji = DataBaseInterface.addReservation("pk@gmail.com", obecnyCzas, 5);
 		System.out.println(idRezerwacji);
 		
 		
 		//tworzymy bilety rzad, nr miejsca i ulga beda podane przez urzytkownika w odpowiednich polach,
-		DataBaseInterface.dodajBilety(5, 5, idRezerwacji, idWybranySeans);
+		Ticket ticket = new Ticket(1, 5, 0);
+		DataBaseInterface.addTickets(ticket, idRezerwacji, idWybranySeans);
 		
 		
 		

@@ -1,6 +1,7 @@
-package bd;
+package com.piotrducki.reservationApp.mode;
 
 import java.util.Date;
+
 import java.awt.Point;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 
+import com.piotrducki.reservationApp.mode.Ticket;
 
 public class DataBaseInterface
 {
@@ -131,22 +133,23 @@ public class DataBaseInterface
 		
 		return tablicaBiletow;
 	}
-
-	private static int getKlientId(String mail) throws SQLException
+	public static boolean checkIfCustumerExists(String mail) throws SQLException
 	{
-		int klientId = 0;
+		int klientId = -1;
 		String query = ("select id from klient  where mail =  \"" + mail + "\"");
 		ResultSet rs = DataBase.getInstance().query(query);
 		if (rs.next())
 			klientId = rs.getInt("id");
-
-		return klientId;
+		if(klientId != -1)
+			return true;
+		else
+			return false;
 	}
 
-	public static int dodajRezerwacje(String mail, String data, int liczbaBiletow) throws SQLException
+	public static int addReservation(String mail, String data, int liczbaBiletow) throws SQLException
 	{
 		int rezerwacjaId = 0;
-		int klientId = DataBaseInterface.getKlientId(mail);
+		int klientId = DataBaseInterface.getCustomerId(mail);
 		String insertQuery = ("INSERT INTO rezerwacja (data_rezerwacji, liczba_biletow, klient_id)  VALUES ( \"" + data
 				+ "\", \"" + liczbaBiletow + "\", \"" + klientId + "\");");
 		DataBase.getInstance().insert(insertQuery);
@@ -159,20 +162,38 @@ public class DataBaseInterface
 		return rezerwacjaId;
 	}
 
-	public static void dodajBilety(int nrSiedzenia, int rzad, int ulga, int rezerwacjaId, int seansId)
+	public static void addTickets(Ticket ticket, int rezerwacjaId, int seansId)
 			throws SQLException
 	{
-		String insertQuery = ("INSERT INTO bilet (nr_siedzenia, rzad, ulga, rezerwacja_id, seans_id)  VALUES ( \""
-				+ nrSiedzenia + "\", \"" + rzad + "\", \"" + ulga + "\",\"" + rezerwacjaId + "\", \"" + seansId
+		int nrSiedzenia = ticket.getSeatNumber();
+		int rzad = ticket.getRowNumber();
+		int ulga = ticket.getDiscount();
+		String insertQuery;
+		if(ulga == 0)
+			 insertQuery = ("INSERT INTO bilet (nr_siedzenia, rzad, rezerwacja_id, seans_id)  VALUES ( \""
+					+ nrSiedzenia + "\", \"" + rzad + "\", \"" + rezerwacjaId + "\", \"" + seansId + "\"   );");
+		else if(ulga == 20)
+			insertQuery = ("INSERT INTO bilet (nr_siedzenia, rzad, ulga, rezerwacja_id, seans_id)  VALUES ( \""
+					+ nrSiedzenia + "\", \"" + rzad + "\",  '20%' ,\"" + rezerwacjaId + "\", \"" + seansId
+					+ "\"   );");
+		else
+			insertQuery = ("INSERT INTO bilet (nr_siedzenia, rzad, ulga, rezerwacja_id, seans_id)  VALUES ( \""
+				+ nrSiedzenia + "\", \"" + rzad + "\",  '25%' ,\"" + rezerwacjaId + "\", \"" + seansId
 				+ "\"   );");
+		
 		DataBase.getInstance().insert(insertQuery);
 	}
 
-	public static void dodajBilety(int nrSiedzenia, int rzad, int rezerwacjaId, int seansId) throws SQLException
+	
+	private static int getCustomerId(String mail) throws SQLException
 	{
-		String insertQuery = ("INSERT INTO bilet (nr_siedzenia, rzad, rezerwacja_id, seans_id)  VALUES ( \""
-				+ nrSiedzenia + "\", \"" + rzad + "\", \"" + rezerwacjaId + "\", \"" + seansId + "\"   );");
-		DataBase.getInstance().insert(insertQuery);
+		int klientId = 0;
+		String query = ("select id from klient  where mail =  \"" + mail + "\"");
+		ResultSet rs = DataBase.getInstance().query(query);
+		if (rs.next())
+			klientId = rs.getInt("id");
+
+		return klientId;
 	}
 
 }

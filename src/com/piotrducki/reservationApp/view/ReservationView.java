@@ -1,4 +1,4 @@
-package com.piotrducki.bd.view;
+package com.piotrducki.reservationApp.view;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -6,9 +6,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-
-import bd.DataBaseInterface;
-import bd.Ticket;
 
 //import java.sql.Date;
 import java.util.Date;
@@ -22,12 +19,17 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+
+import com.piotrducki.reservationApp.mode.DataBaseInterface;
+import com.piotrducki.reservationApp.mode.Ticket;
+
 import java.lang.Object;
 
 public class ReservationView extends JFrame
 {
 	private final int NUMER_OF_ROWS = 5;
 	private final int NUMBER_OF_SEATS_IN_ROW = 10;
+	
 	private String[] currentlyPlayedMovies;
 	private String[] movieHours;
 
@@ -39,6 +41,8 @@ public class ReservationView extends JFrame
 	private Point[] purchasedTickets;
 	private ArrayList<Ticket> choseTickets = new ArrayList<Ticket>();
 	private String clientEmail = "";
+	private int reservationId;
+
 	private Object[][] data =
 	{
 			{ '-', '-', '-', '-', '-', '-', '-', '-', '-', '-' },
@@ -94,10 +98,8 @@ public class ReservationView extends JFrame
 	 */
 	public ReservationView() throws SQLException
 	{
-
 		initComponets();
 		createEvents();
-
 	}
 
 	//////////////////////////////////////////////////////////
@@ -188,17 +190,21 @@ public class ReservationView extends JFrame
 
 		// chose seats
 
-		spinnerRow = new JSpinner();
+		SpinnerModel smRow = new SpinnerNumberModel(1, 1, NUMER_OF_ROWS, 1); // default value,lower bound,upper
+																			// bound,increment by
+		spinnerRow = new JSpinner(smRow);
 		spinnerRow.setBounds(25, 430, 81, 26);
 		contentPane.add(spinnerRow);
 
-		spinnerSeatNumber = new JSpinner();
-		spinnerSeatNumber.setBounds(130, 430, 85, 26);
+		SpinnerModel smSeatNumber = new SpinnerNumberModel(1, 1, NUMBER_OF_SEATS_IN_ROW, 1);
+		spinnerSeatNumber = new JSpinner(smSeatNumber);
+		spinnerSeatNumber.setBounds(118, 430, 85, 26);
 		contentPane.add(spinnerSeatNumber);
-		String[] discountList = {"none", "senior", "student"};
+		String[] discountList =
+		{ "none", "senior", "student" };
 		comboBoxDiscount = new JComboBox(discountList);
-		comboBoxDiscount.setBounds(244, 431, 81, 27);
-		
+		comboBoxDiscount.setBounds(215, 431, 120, 27);
+
 		contentPane.add(comboBoxDiscount);
 
 		buttonAdd = new JButton("add");
@@ -210,28 +216,28 @@ public class ReservationView extends JFrame
 		contentPane.add(lblRow);
 
 		JLabel lblSeatNumber = new JLabel("seat ");
-		lblSeatNumber.setBounds(135, 402, 81, 16);
+		lblSeatNumber.setBounds(124, 402, 81, 16);
 		contentPane.add(lblSeatNumber);
 
 		JLabel lblDiscount = new JLabel("discount");
-		lblDiscount.setBounds(251, 402, 61, 16);
+		lblDiscount.setBounds(220, 402, 61, 16);
 		contentPane.add(lblDiscount);
-		
+
 		// enter email
-		
+
 		textFieldEmail = new JTextField();
-		textFieldEmail.setBounds(130, 489, 223, 26);
+		textFieldEmail.setBounds(118, 489, 242, 26);
 		contentPane.add(textFieldEmail);
 		textFieldEmail.setColumns(10);
-		
+
 		JLabel lableEmail = new JLabel("Email");
-		lableEmail.setBounds(81, 494, 34, 16);
+		lableEmail.setBounds(72, 494, 34, 16);
 		contentPane.add(lableEmail);
-		
-		//make reservation
-		
-		buttonMakeReservation = new JButton("New button");
-		buttonMakeReservation.setBounds(130, 553, 155, 68);
+
+		// make reservation
+
+		buttonMakeReservation = new JButton("Make Reservation");
+		buttonMakeReservation.setBounds(126, 579, 155, 68);
 		contentPane.add(buttonMakeReservation);
 
 	}
@@ -323,41 +329,39 @@ public class ReservationView extends JFrame
 
 		buttonAdd.addActionListener(new ActionListener()
 		{
-			int row, seatNumber, discount=0;
+			int row, seatNumber, discount = 0;
 
 			public void actionPerformed(ActionEvent e)
 			{
 				row = (int) spinnerRow.getValue();
 				seatNumber = (int) spinnerSeatNumber.getValue();
-				if (row <= 0 || row > NUMER_OF_ROWS)
-				{
-					System.out.println("wrong row number");
-					return;
-				}
-				if (seatNumber <= 0 || seatNumber > NUMBER_OF_SEATS_IN_ROW)
-				{
-					System.out.println("wrong seat number");
-					return;
-				}
 				for (Point ticket : purchasedTickets)
 				{
-					if(ticket.x == row && ticket.y ==seatNumber)
+					if (ticket.x == row && ticket.y == seatNumber)
 					{
-						System.out.println("ticket not available");
+						JOptionPane.showMessageDialog(null, "ticket not available");
 						return;
 					}
 				}
-				switch ((int)comboBoxDiscount.getSelectedIndex())
+				for (Ticket ticket : choseTickets)
+				{
+					if (ticket.getRowNumber() == row && ticket.getSeatNumber() == seatNumber)
+					{
+						JOptionPane.showMessageDialog(null, "ticket already chosen");
+						return;
+					}
+				}
+				switch ((int) comboBoxDiscount.getSelectedIndex())
 				{
 				case 0:
 					discount = 0;
 					break;
 				case 1:
 					discount = 20;
-					break;	
+					break;
 				case 2:
 					discount = 25;
-					break;	
+					break;
 				default:
 					discount = 0;
 					break;
@@ -367,21 +371,54 @@ public class ReservationView extends JFrame
 				System.out.println(discount);
 				Ticket ticket = new Ticket(row, seatNumber, discount);
 				choseTickets.add(ticket);
-				System.out.println(ticket);
-
+				JOptionPane.showMessageDialog(null, "ticket " + ticket + " added");
 			}
 		});
-		
+
+		// make reservation
+
 		buttonMakeReservation.addActionListener(new ActionListener()
 		{
-			
-
 			public void actionPerformed(ActionEvent e)
 			{
-				
+				clientEmail = textFieldEmail.getText();
+				try
+				{
+					if (!DataBaseInterface.checkIfCustumerExists(clientEmail))
+						JOptionPane.showMessageDialog(null, "customer not found");
+					else
+					{
+						DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+						Calendar cal = Calendar.getInstance();
+						String currentDateTime = dateFormat.format(cal.getTime());
+
+						reservationId = DataBaseInterface.addReservation(clientEmail, currentDateTime,
+								choseTickets.size());
+						for (Ticket ticket : choseTickets)
+							DataBaseInterface.addTickets(ticket, reservationId, showTimeId);
+
+						resetDataInGui();
+						JOptionPane.showMessageDialog(null, choseTickets.size() + " tickets reserved successful ");
+
+					}
+				} catch (SQLException e1)
+				{
+					e1.printStackTrace();
+				}
 
 			}
 		});
+	}
+
+	private void resetDataInGui()
+	{
+		comboBoxMovie.removeAllItems();
+		comboBoxDiscount.removeAllItems();
+		comboBoxHour.removeAllItems();
+		spinnerRow.setValue(new Integer(1));
+		spinnerSeatNumber.setValue(new Integer(1));
+		textFieldEmail.setText("");
+
 	}
 
 	private void insetPurchasedTicketsData()
