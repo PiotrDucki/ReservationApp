@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 
-import com.piotrducki.reservationApp.mode.DataBaseInterface;
+import com.piotrducki.reservationApp.DataBase.DataBaseInterface;
 import com.piotrducki.reservationApp.mode.Film;
 import com.piotrducki.reservationApp.mode.Ticket;
 public class Test1

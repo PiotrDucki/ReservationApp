@@ -1,4 +1,5 @@
-package com.piotrducki.reservationApp.mode;
+package com.piotrducki.reservationApp.DataBase;
+
 
 
 import java.sql.Connection;

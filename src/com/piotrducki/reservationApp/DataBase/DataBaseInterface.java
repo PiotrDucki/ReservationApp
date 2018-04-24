@@ -1,4 +1,5 @@
-package com.piotrducki.reservationApp.mode;
+package com.piotrducki.reservationApp.DataBase;
+
 
 import java.util.Date;
 
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 
+import com.piotrducki.reservationApp.mode.Film;
 import com.piotrducki.reservationApp.mode.Ticket;
 
 public class DataBaseInterface

@@ -7,7 +7,6 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
-//import java.sql.Date;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,7 +19,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import com.piotrducki.reservationApp.mode.DataBaseInterface;
+import com.piotrducki.reservationApp.DataBase.DataBaseInterface;
 import com.piotrducki.reservationApp.mode.Ticket;
 
 import java.lang.Object;
@@ -29,7 +28,7 @@ public class ReservationView extends JFrame
 {
 	private final int NUMER_OF_ROWS = 5;
 	private final int NUMBER_OF_SEATS_IN_ROW = 10;
-	
+
 	private String[] currentlyPlayedMovies;
 	private String[] movieHours;
 
@@ -73,6 +72,7 @@ public class ReservationView extends JFrame
 	/**
 	 * Launch the application.
 	 */
+	
 	public static void main(String[] args)
 	{
 		EventQueue.invokeLater(new Runnable()
@@ -91,24 +91,20 @@ public class ReservationView extends JFrame
 		});
 	}
 
-	/**
-	 * Create the frame.
-	 * 
-	 * @throws SQLException
-	 */
+	
 	public ReservationView() throws SQLException
 	{
 		initComponets();
 		createEvents();
 	}
 
-	//////////////////////////////////////////////////////////
-	//
-	//////////////////////////////////////////////////////////
+
 
 	private void initComponets() throws SQLException
 	{
+		//////////////////////////////////////////////////////////
 		// init screan
+		//////////////////////////////////////////////////////////
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 425, 720);
@@ -119,7 +115,9 @@ public class ReservationView extends JFrame
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
+		//////////////////////////////////////////////////////////
 		// chose cinema
+		//////////////////////////////////////////////////////////
 
 		comboBoxCinema = new JComboBox(DataBaseInterface.getCinemas());
 		comboBoxCinema.setBounds(34, 25, 202, 27);
@@ -129,7 +127,9 @@ public class ReservationView extends JFrame
 		buttonSetCinema.setBounds(275, 24, 117, 29);
 		contentPane.add(buttonSetCinema);
 
+		//////////////////////////////////////////////////////////
 		// chose date
+		//////////////////////////////////////////////////////////
 
 		java.util.Date todaysDate = new java.util.Date();
 		dateSpinner = new JSpinner(new SpinnerDateModel(todaysDate, null, null, Calendar.DAY_OF_MONTH));
@@ -142,7 +142,9 @@ public class ReservationView extends JFrame
 		buttonSetDate.setBounds(275, 81, 117, 29);
 		contentPane.add(buttonSetDate);
 
+		//////////////////////////////////////////////////////////
 		// chose movie
+		//////////////////////////////////////////////////////////
 
 		comboBoxMovie = new JComboBox();
 		comboBoxMovie.setBounds(34, 134, 202, 27);
@@ -151,8 +153,10 @@ public class ReservationView extends JFrame
 		buttonSetMovie = new JButton("set");
 		buttonSetMovie.setBounds(275, 133, 117, 29);
 		contentPane.add(buttonSetMovie);
-
+		
+		//////////////////////////////////////////////////////////
 		// chose hour
+		//////////////////////////////////////////////////////////
 
 		comboBoxHour = new JComboBox();
 		comboBoxHour.setBounds(34, 188, 202, 27);
@@ -188,10 +192,12 @@ public class ReservationView extends JFrame
 		panel.add(scrollPane, BorderLayout.CENTER);
 		getContentPane().add(panel);
 
+		//////////////////////////////////////////////////////////
 		// chose seats
+		//////////////////////////////////////////////////////////
 
 		SpinnerModel smRow = new SpinnerNumberModel(1, 1, NUMER_OF_ROWS, 1); // default value,lower bound,upper
-																			// bound,increment by
+																				// bound,increment by
 		spinnerRow = new JSpinner(smRow);
 		spinnerRow.setBounds(25, 430, 81, 26);
 		contentPane.add(spinnerRow);
@@ -223,7 +229,9 @@ public class ReservationView extends JFrame
 		lblDiscount.setBounds(220, 402, 61, 16);
 		contentPane.add(lblDiscount);
 
+		//////////////////////////////////////////////////////////
 		// enter email
+		//////////////////////////////////////////////////////////
 
 		textFieldEmail = new JTextField();
 		textFieldEmail.setBounds(118, 489, 242, 26);
@@ -234,7 +242,9 @@ public class ReservationView extends JFrame
 		lableEmail.setBounds(72, 494, 34, 16);
 		contentPane.add(lableEmail);
 
+		//////////////////////////////////////////////////////////
 		// make reservation
+		//////////////////////////////////////////////////////////
 
 		buttonMakeReservation = new JButton("Make Reservation");
 		buttonMakeReservation.setBounds(126, 579, 155, 68);
@@ -245,7 +255,9 @@ public class ReservationView extends JFrame
 	private void createEvents()
 	{
 
+		//////////////////////////////////////////////////////////
 		// set cinema
+		//////////////////////////////////////////////////////////
 
 		buttonSetCinema.addActionListener(new ActionListener()
 		{
@@ -256,7 +268,9 @@ public class ReservationView extends JFrame
 			}
 		});
 
+		//////////////////////////////////////////////////////////
 		// set date
+		//////////////////////////////////////////////////////////
 
 		buttonSetDate.addActionListener(new ActionListener()
 		{
@@ -280,7 +294,9 @@ public class ReservationView extends JFrame
 			}
 		});
 
+		//////////////////////////////////////////////////////////
 		// set movie
+		//////////////////////////////////////////////////////////
 
 		buttonSetMovie.addActionListener(new ActionListener()
 		{
@@ -301,7 +317,9 @@ public class ReservationView extends JFrame
 			}
 		});
 
+		//////////////////////////////////////////////////////////
 		// set hour
+		//////////////////////////////////////////////////////////
 
 		buttonSetHoure.addActionListener(new ActionListener()
 		{
@@ -325,7 +343,9 @@ public class ReservationView extends JFrame
 			}
 		});
 
-		// add seet
+		//////////////////////////////////////////////////////////
+		// add seat
+		//////////////////////////////////////////////////////////
 
 		buttonAdd.addActionListener(new ActionListener()
 		{
@@ -375,8 +395,10 @@ public class ReservationView extends JFrame
 			}
 		});
 
+		//////////////////////////////////////////////////////////
 		// make reservation
-
+		//////////////////////////////////////////////////////////
+		
 		buttonMakeReservation.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
