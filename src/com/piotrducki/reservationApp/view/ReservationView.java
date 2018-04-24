@@ -29,6 +29,13 @@ public class ReservationView extends JFrame
 	private final int NUMER_OF_ROWS = 5;
 	private final int NUMBER_OF_SEATS_IN_ROW = 10;
 
+	private final int SEAT_SQUARE_SIZE = 25;
+	private final int SPACE_BEETWEN_SEATS = 5;
+
+	private final int SEAT_IS_FREE = 0;
+	private final int SEAT_IS_SELECTED = 1;
+	private final int SEAT_IS_UNAVAILABLE = 2;
+
 	private String[] currentlyPlayedMovies;
 	private String[] movieHours;
 
@@ -42,15 +49,8 @@ public class ReservationView extends JFrame
 	private String clientEmail = "";
 	private int reservationId;
 
-	private Object[][] data =
-	{
-			{ '-', '-', '-', '-', '-', '-', '-', '-', '-', '-' },
-			{ '-', '-', '-', '-', '-', '-', '-', '-', '-', '-' },
-			{ '-', '-', '-', '-', '-', '-', '-', '-', '-', '-' },
-			{ '-', '-', '-', '-', '-', '-', '-', '-', '-', '-' },
-			{ '-', '-', '-', '-', '-', '-', '-', '-', '-', '-' }
-
-	};;;
+	// init with free seats
+	private int[][] seatsTable = new int[5][10];
 
 	private JPanel contentPane;
 	private JComboBox comboBoxCinema;
@@ -61,18 +61,18 @@ public class ReservationView extends JFrame
 	private JButton buttonSetMovie;
 	private JComboBox comboBoxHour;
 	private JButton buttonSetHoure;
-	private JTable tableSeets;
 	private JSpinner spinnerRow;
 	private JSpinner spinnerSeatNumber;
 	private JComboBox comboBoxDiscount;
 	private JButton buttonAdd;
 	private JTextField textFieldEmail;
 	private JButton buttonMakeReservation;
+	private JPanel panelSeats;
 
 	/**
 	 * Launch the application.
 	 */
-	
+
 	public static void main(String[] args)
 	{
 		EventQueue.invokeLater(new Runnable()
@@ -91,14 +91,12 @@ public class ReservationView extends JFrame
 		});
 	}
 
-	
 	public ReservationView() throws SQLException
 	{
+
 		initComponets();
 		createEvents();
 	}
-
-
 
 	private void initComponets() throws SQLException
 	{
@@ -153,7 +151,7 @@ public class ReservationView extends JFrame
 		buttonSetMovie = new JButton("set");
 		buttonSetMovie.setBounds(275, 133, 117, 29);
 		contentPane.add(buttonSetMovie);
-		
+
 		//////////////////////////////////////////////////////////
 		// chose hour
 		//////////////////////////////////////////////////////////
@@ -166,31 +164,41 @@ public class ReservationView extends JFrame
 		buttonSetHoure.setBounds(275, 187, 117, 29);
 		contentPane.add(buttonSetHoure);
 
-		Object[] columnNames =
-		{ " 1", " 2", " 3", " 4", " 5", " 6", " 7", " 8", " 9", "10" };
+		//////////////////////////////////////////////////////////
+		// display seats
+		//////////////////////////////////////////////////////////
 
-		DefaultTableModel model = new DefaultTableModel(data, columnNames);
-		tableSeets = new JTable(model)
+		panelSeats = new JPanel()
 		{
-
-			private static final long serialVersionUID = 1L;
-
 			@Override
-			public Class getColumnClass(int column)
+			public void paintComponent(Graphics g)
 			{
-				return Character.class;
+				for (int i = 0; i < NUMER_OF_ROWS; i++)
+					for (int j = 0; j < NUMBER_OF_SEATS_IN_ROW; j++)
+					{
+						switch (seatsTable[i][j])
+						{
+						case SEAT_IS_FREE:
+							g.setColor(Color.GREEN);
+							break;
+						case SEAT_IS_SELECTED:
+							g.setColor(Color.YELLOW);
+							break;
+						case SEAT_IS_UNAVAILABLE:
+							g.setColor(Color.RED);
+							break;
+						default:
+							break;
+						}
+						g.fillRect(SPACE_BEETWEN_SEATS + j * (SPACE_BEETWEN_SEATS + SEAT_SQUARE_SIZE),
+								SPACE_BEETWEN_SEATS + i * (SPACE_BEETWEN_SEATS + SEAT_SQUARE_SIZE), SEAT_SQUARE_SIZE,
+								SEAT_SQUARE_SIZE);
+					}
 			}
 		};
-		model.fireTableDataChanged();
 
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setViewportView(tableSeets);
-
-		JPanel panel = new JPanel(new BorderLayout());
-		panel.setSize(320, 100);
-		panel.setLocation(50, 250);
-		panel.add(scrollPane, BorderLayout.CENTER);
-		getContentPane().add(panel);
+		panelSeats.setBounds(59, 257, 300, 150);
+		contentPane.add(panelSeats);
 
 		//////////////////////////////////////////////////////////
 		// chose seats
@@ -199,34 +207,34 @@ public class ReservationView extends JFrame
 		SpinnerModel smRow = new SpinnerNumberModel(1, 1, NUMER_OF_ROWS, 1); // default value,lower bound,upper
 																				// bound,increment by
 		spinnerRow = new JSpinner(smRow);
-		spinnerRow.setBounds(25, 430, 81, 26);
+		spinnerRow.setBounds(34, 470, 81, 26);
 		contentPane.add(spinnerRow);
 
 		SpinnerModel smSeatNumber = new SpinnerNumberModel(1, 1, NUMBER_OF_SEATS_IN_ROW, 1);
 		spinnerSeatNumber = new JSpinner(smSeatNumber);
-		spinnerSeatNumber.setBounds(118, 430, 85, 26);
+		spinnerSeatNumber.setBounds(127, 470, 85, 26);
 		contentPane.add(spinnerSeatNumber);
 		String[] discountList =
 		{ "none", "senior", "student" };
 		comboBoxDiscount = new JComboBox(discountList);
-		comboBoxDiscount.setBounds(215, 431, 120, 27);
+		comboBoxDiscount.setBounds(224, 471, 120, 27);
 
 		contentPane.add(comboBoxDiscount);
 
 		buttonAdd = new JButton("add");
-		buttonAdd.setBounds(347, 430, 55, 29);
+		buttonAdd.setBounds(356, 470, 55, 29);
 		contentPane.add(buttonAdd);
 
 		JLabel lblRow = new JLabel("row");
-		lblRow.setBounds(32, 402, 61, 16);
+		lblRow.setBounds(41, 442, 61, 16);
 		contentPane.add(lblRow);
 
 		JLabel lblSeatNumber = new JLabel("seat ");
-		lblSeatNumber.setBounds(124, 402, 81, 16);
+		lblSeatNumber.setBounds(133, 442, 81, 16);
 		contentPane.add(lblSeatNumber);
 
 		JLabel lblDiscount = new JLabel("discount");
-		lblDiscount.setBounds(220, 402, 61, 16);
+		lblDiscount.setBounds(229, 442, 61, 16);
 		contentPane.add(lblDiscount);
 
 		//////////////////////////////////////////////////////////
@@ -234,12 +242,12 @@ public class ReservationView extends JFrame
 		//////////////////////////////////////////////////////////
 
 		textFieldEmail = new JTextField();
-		textFieldEmail.setBounds(118, 489, 242, 26);
+		textFieldEmail.setBounds(127, 529, 242, 26);
 		contentPane.add(textFieldEmail);
 		textFieldEmail.setColumns(10);
 
 		JLabel lableEmail = new JLabel("Email");
-		lableEmail.setBounds(72, 494, 34, 16);
+		lableEmail.setBounds(81, 534, 34, 16);
 		contentPane.add(lableEmail);
 
 		//////////////////////////////////////////////////////////
@@ -247,7 +255,7 @@ public class ReservationView extends JFrame
 		//////////////////////////////////////////////////////////
 
 		buttonMakeReservation = new JButton("Make Reservation");
-		buttonMakeReservation.setBounds(126, 579, 155, 68);
+		buttonMakeReservation.setBounds(127, 592, 155, 68);
 		contentPane.add(buttonMakeReservation);
 
 	}
@@ -333,7 +341,8 @@ public class ReservationView extends JFrame
 					System.out.println(showTimeId);
 					purchasedTickets = DataBaseInterface.getPurchasedTickets(showTimeId);
 					System.out.println(Arrays.toString(purchasedTickets));
-					insetPurchasedTicketsData();
+					insetUnavailableSeats();
+					panelSeats.repaint();
 
 				} catch (SQLException e1)
 				{
@@ -357,7 +366,7 @@ public class ReservationView extends JFrame
 				seatNumber = (int) spinnerSeatNumber.getValue();
 				for (Point ticket : purchasedTickets)
 				{
-					if (ticket.x == row && ticket.y == seatNumber)
+					if (ticket.x == seatNumber && ticket.y == row)
 					{
 						JOptionPane.showMessageDialog(null, "ticket not available");
 						return;
@@ -391,14 +400,17 @@ public class ReservationView extends JFrame
 				System.out.println(discount);
 				Ticket ticket = new Ticket(row, seatNumber, discount);
 				choseTickets.add(ticket);
+				seatsTable[row - 1][seatNumber - 1] = SEAT_IS_SELECTED;
 				JOptionPane.showMessageDialog(null, "ticket " + ticket + " added");
+				panelSeats.repaint();
+
 			}
 		});
 
 		//////////////////////////////////////////////////////////
 		// make reservation
 		//////////////////////////////////////////////////////////
-		
+
 		buttonMakeReservation.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
@@ -440,14 +452,18 @@ public class ReservationView extends JFrame
 		spinnerRow.setValue(new Integer(1));
 		spinnerSeatNumber.setValue(new Integer(1));
 		textFieldEmail.setText("");
+		for (int[] seatRow : seatsTable)
+			for (int seat : seatRow)
+				seat = SEAT_IS_FREE;
+		panelSeats.repaint();
 
 	}
 
-	private void insetPurchasedTicketsData()
+	private void insetUnavailableSeats()
 	{
 		for (Point ticket : purchasedTickets)
 		{
-			data[ticket.x - 1][ticket.y - 1] = 'X';
+			seatsTable[(int) (ticket.getY() - 1)][(int) (ticket.getX() - 1)] = SEAT_IS_UNAVAILABLE;
 		}
 
 	}

@@ -126,7 +126,7 @@ public class DataBaseInterface
 		{
 			rzad = rs.getInt("rzad");
 			nr_siedzenia = rs.getInt("nr_siedzenia");
-			bilety.add(new Point(rzad, nr_siedzenia));
+			bilety.add(new Point(nr_siedzenia, rzad));
 			
 		}
 		Point [] tablicaBiletow= bilety.toArray(new Point[bilety.size()]);
