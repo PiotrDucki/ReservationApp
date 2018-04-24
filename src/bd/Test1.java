@@ -1,6 +1,8 @@
 package bd;
 
+import java.awt.Point;
 import java.sql.Date;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -17,20 +19,22 @@ public class Test1
 	
 	public static void main(String[] args) throws SQLException
 	{
-		 ArrayList<String> filmy;
-		 ArrayList<String> godziny;
+		 String[] filmy;
+		 String[] godziny;
 		 String wybraneKino ;
 		 String wybranyFilm;
 		 String wybranaGodzina;
 		  String obecnyCzas;
 		 int idWybranySeans;
-		 ArrayList<Integer> zajeteMiejsca;
+		Point[] zajeteMiejsca;
 		 int idKlienta;
 		 int idRezerwacji;
 		 ArrayList<Film> aktualnieGraneFilmy;
 		 
+		 				
+		 
 		 @SuppressWarnings("deprecation")
-			Date wybranaData =  new Date(118, 03, 10); //takie liczwy daja 2018-04-10
+			Date wybranaData =  new Date(118, 03, 10); // 2018-04-10
 			System.out.println( wybranaData);
 		 
 		
@@ -40,32 +44,32 @@ public class Test1
 
 		 
 		 // nazwy kin z bazy danych
-		ArrayList<String> nazwyKin = DataBaseInterface.getKinoNazwy();
-		 wybraneKino = nazwyKin.get(0);
+		String[] nazwyKin = DataBaseInterface.getCinemas();
+		 wybraneKino = nazwyKin[0];
 		 System.out.println(wybraneKino );
 		
 	
-		
+		 System.out.println("2018-04-10" );
 		// akutalnie grane filmy danego dnia w danym kinie
-		filmy = DataBaseInterface.getTytylyGranychFilmow(wybranaData, wybraneKino );
-		wybranyFilm = filmy.get(0);
-		System.out.println(filmy);
+		filmy = DataBaseInterface.getCurrentlyPlayedMovies("2018-04-10", wybraneKino);
+		wybranyFilm = filmy[0];
+		System.out.println(Arrays.toString(filmy));
 		
 		
 		//godziny seansow danego filmu w danym kinie
-		godziny =  DataBaseInterface.getGodzinySensowFilmu(wybranaData, wybranyFilm, wybraneKino);
-		wybranaGodzina = godziny.get(0);
-		System.out.println(godziny);
+		godziny =  DataBaseInterface.getMovieHours("2018-04-10", wybranyFilm, wybraneKino);
+		wybranaGodzina = godziny[0];
+		System.out.println(Arrays.toString(godziny));
 		
 		
 		//id wybranego seansu
-		idWybranySeans =  DataBaseInterface.getSeansId(wybranaData, wybranaGodzina, wybranyFilm, wybraneKino);
+		idWybranySeans =  DataBaseInterface.getShowTimeId("2018-04-10", wybranaGodzina, wybranyFilm, wybraneKino);
 		System.out.println(idWybranySeans);
 		
 		
 		//zajete miesca pierwsza liczba oznacza rzad, druga nr siedzenia
-		zajeteMiejsca = DataBaseInterface.getKupioneBilety(idWybranySeans);
-		System.out.println(zajeteMiejsca.toString());
+		zajeteMiejsca = DataBaseInterface.getPurchasedTickets(idWybranySeans);
+		System.out.println(Arrays.toString(zajeteMiejsca));
 		
 		
 		

@@ -1,12 +1,13 @@
 package bd;
 
-import java.sql.Date;
+import java.util.Date;
+import java.awt.Point;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 
-import javax.xml.crypto.Data;
 
 public class DataBaseInterface
 {
@@ -45,7 +46,7 @@ public class DataBaseInterface
 
 	
 	
-	public static ArrayList<String> getKinoNazwy() throws SQLException
+	public static String[] getCinemas() throws SQLException
 	{
 		ArrayList<String> nazwy = new ArrayList<String>();
 		String query = ("select nazwa from kino;");
@@ -56,14 +57,15 @@ public class DataBaseInterface
 			String nazwa = rs.getString("nazwa");
 			nazwy.add(nazwa);
 		}
-		return nazwy;
+		String[] tablicaNazw = nazwy.toArray(new String [nazwy.size()]);
+		return tablicaNazw ;
 	}
 
-	public static ArrayList<String> getTytylyGranychFilmow(Date data, String nazwaKina) throws SQLException
+	public static String[] getCurrentlyPlayedMovies(String date, String nazwaKina) throws SQLException
 	{
 
 		ArrayList<String> filmy = new ArrayList<String>();
-		String query = ("select film_tytul from seans s where date(s.data) =  \"" + data + "\""
+		String query = ("select film_tytul from seans s where date(s.data) =  \"" + date + "\""
 				+ "and s.sala_kino_nazwa = \"" + nazwaKina + "\" group by s.film_tytul ");
 
 		ResultSet rs = DataBase.getInstance().query(query);
@@ -72,10 +74,11 @@ public class DataBaseInterface
 			String film = rs.getString("film_tytul");
 			filmy.add(film);
 		}
-		return filmy;
+		String[] tablicaFilmy = filmy.toArray( new String[filmy.size()]);	
+		
+		return tablicaFilmy;
 	}
-
-	public static ArrayList<String> getGodzinySensowFilmu(Date data, String tytulFilmu, String nazwaKina)
+	public static String[] getMovieHours(String data, String tytulFilmu, String nazwaKina)
 			throws SQLException
 	{
 
@@ -88,12 +91,14 @@ public class DataBaseInterface
 			String godzina = rs.getString("czas");
 			godziny.add(godzina);
 		}
-		return godziny;
+		
+		String[] tablicaGodziny= godziny.toArray(new String [godziny.size()]);
+		return tablicaGodziny;
 	}
 
-	public static int getSeansId(Date dzien, String godzina, String tytulFilmu, String nazwaKina) throws SQLException
+	public static int getShowTimeId(String dzien, String godzina, String tytulFilmu, String nazwaKina) throws SQLException
 	{
-		String data = (dzien.toString() + " " + godzina + ":00");
+		String data = (dzien+ " " + godzina + ":00");
 		int seansId = 0;
 		String query = (" select id from seans  where data  =    \"" + data + "\"" + "and sala_kino_nazwa = \""
 				+ nazwaKina + "\"" + "and film_tytul =     \"" + tytulFilmu + "\"");
@@ -106,9 +111,9 @@ public class DataBaseInterface
 		return seansId;
 	}
 
-	public static ArrayList<Integer> getKupioneBilety(int seansId) throws SQLException
+	public static Point[] getPurchasedTickets(int seansId) throws SQLException
 	{
-		ArrayList<Integer> bilety = new ArrayList<Integer>();
+		ArrayList<Point> bilety = new ArrayList<Point>();
 		int rzad, nr_siedzenia;
 		String query = ("select nr_siedzenia, rzad from bilet where seans_id = " + seansId + " ;");
 
@@ -117,10 +122,14 @@ public class DataBaseInterface
 		{
 			rzad = rs.getInt("rzad");
 			nr_siedzenia = rs.getInt("nr_siedzenia");
-			bilety.add(rzad);
-			bilety.add(nr_siedzenia);
+			bilety.add(new Point(rzad, nr_siedzenia));
+			
 		}
-		return bilety;
+		Point [] tablicaBiletow= bilety.toArray(new Point[bilety.size()]);
+		
+		
+		
+		return tablicaBiletow;
 	}
 
 	private static int getKlientId(String mail) throws SQLException
