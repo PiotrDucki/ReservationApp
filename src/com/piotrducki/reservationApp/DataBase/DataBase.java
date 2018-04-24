@@ -23,7 +23,7 @@ public class DataBase
 		String url = "jdbc:mysql://127.0.0.1:3306/Kino?useSSL=false";
 		String driver = "com.mysql.jdbc.Driver";
 		String userName = "root";
-		String password = "2997";
+		String password = "root";
 		try
 		{
 			Class.forName(driver).newInstance();

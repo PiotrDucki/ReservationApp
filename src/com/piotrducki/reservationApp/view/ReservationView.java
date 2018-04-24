@@ -107,6 +107,8 @@ public class ReservationView extends JFrame
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 425, 720);
 		setTitle("Reservation");
+		setResizable(false);
+		setLocationRelativeTo(null);
 
 		contentPane = new JPanel();
 		contentPane.setBorder(new LineBorder(new Color(0, 0, 0)));
@@ -273,6 +275,7 @@ public class ReservationView extends JFrame
 			{
 				chosenCinema = (String) comboBoxCinema.getSelectedItem();
 				System.out.println(chosenCinema);
+				resetDataInGui();
 			}
 		});
 
@@ -294,6 +297,7 @@ public class ReservationView extends JFrame
 					comboBoxHour.removeAllItems();
 					for (String movie : currentlyPlayedMovies)
 						comboBoxMovie.addItem(movie);
+					resetSeatPanel();
 
 				} catch (SQLException e1)
 				{
@@ -318,6 +322,7 @@ public class ReservationView extends JFrame
 					comboBoxHour.removeAllItems();
 					for (String hour : movieHours)
 						comboBoxHour.addItem(hour);
+					resetSeatPanel();
 				} catch (SQLException e1)
 				{
 					e1.printStackTrace();
@@ -337,6 +342,7 @@ public class ReservationView extends JFrame
 				System.out.println(chosenHour);
 				try
 				{
+					resetSeatPanel();
 					showTimeId = DataBaseInterface.getShowTimeId(chosenDate, chosenHour, chosenMovie, chosenCinema);
 					System.out.println(showTimeId);
 					purchasedTickets = DataBaseInterface.getPurchasedTickets(showTimeId);
@@ -401,7 +407,6 @@ public class ReservationView extends JFrame
 				Ticket ticket = new Ticket(row, seatNumber, discount);
 				choseTickets.add(ticket);
 				seatsTable[row - 1][seatNumber - 1] = SEAT_IS_SELECTED;
-				JOptionPane.showMessageDialog(null, "ticket " + ticket + " added");
 				panelSeats.repaint();
 
 			}
@@ -447,16 +452,20 @@ public class ReservationView extends JFrame
 	private void resetDataInGui()
 	{
 		comboBoxMovie.removeAllItems();
-		comboBoxDiscount.removeAllItems();
 		comboBoxHour.removeAllItems();
 		spinnerRow.setValue(new Integer(1));
 		spinnerSeatNumber.setValue(new Integer(1));
 		textFieldEmail.setText("");
-		for (int[] seatRow : seatsTable)
-			for (int seat : seatRow)
-				seat = SEAT_IS_FREE;
-		panelSeats.repaint();
+		resetSeatPanel();
 
+	}
+	
+	private void resetSeatPanel()
+	{
+		for (int i = 0; i < NUMER_OF_ROWS; i++)
+			for (int j = 0; j < NUMBER_OF_SEATS_IN_ROW; j++)
+				seatsTable[i][j] = SEAT_IS_FREE;
+		panelSeats.repaint();
 	}
 
 	private void insetUnavailableSeats()
