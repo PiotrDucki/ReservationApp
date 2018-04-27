@@ -10,41 +10,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-import com.piotrducki.reservationApp.mode.Film;
 import com.piotrducki.reservationApp.mode.Ticket;
 
 public class DataBaseInterface
 {
 	
-	// zapytanie do wyswietlania repertuaru 
-
-	public static ArrayList<Film> getAktualnieGraneFilmy(Date data) throws SQLException
-	{
-		ArrayList<Film> filmy = new ArrayList<Film>();
-		String tytul;
-		float dlugosc;
-		String rezyser;
-		String kategoria;
-		float ocena;
-		int ograniczeniaWiekowe;
-
-		String query = ("select film_tytul, rezyser, dlugosc, kategoria, ocena, ograniczenia_wiekowe from seans s, film f "
-				+ "	where s.film_tytul = f.tytul and date(s.data) = \"" + data + "\"" + "		group by f.tytul;");
-		ResultSet rs = DataBase.getInstance().query(query);
-		while (rs.next())
-		{
-			tytul = rs.getString("film_tytul");
-			dlugosc = rs.getFloat("dlugosc");
-			rezyser = rs.getString("rezyser");
-			kategoria = rs.getString("kategoria");
-			ocena = rs.getFloat("ocena");
-			ograniczeniaWiekowe = rs.getInt("ograniczenia_wiekowe");
-			Film film = new Film(tytul, dlugosc, rezyser, kategoria, ocena, ograniczeniaWiekowe);
-			filmy.add(film);
-		}
-		return filmy;
-	}
-
+	
 	
 	// zapytania do obslugi rezerwacii
 
