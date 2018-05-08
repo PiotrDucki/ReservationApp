@@ -1,4 +1,4 @@
-# App written in JAVA and mySQL that lets user booked chosen tickets for movie 
+
 
 
 
